@@ -2,7 +2,9 @@ TAG = dev
 
 PKG        := k8s.io/metacontroller
 API_GROUPS := metacontroller/v1alpha1
-IMAGE ?= gcr.io/constant-cubist-173123/metacontroller
+REGISTRY ?= ''
+PROJECT ?= metacontroller
+IMAGE ?= $(REGISTRY)$(PROJECT)/metacontroller
 
 all: install
 
