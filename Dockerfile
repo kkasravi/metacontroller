@@ -9,6 +9,6 @@ FROM ${REGISTRY}${PROJECT}/authz_controller_build:$AUTHZ_CONTROLLER_BUILD_VERSIO
 
 COPY . /go/src/k8s.io/metacontroller/
 WORKDIR /go/src/k8s.io/metacontroller/
-RUN dep ensure && go install
+RUN dep ensure && go build -gcflags "all=-N -l" -a -o /go/bin/metacontroller .
 RUN cp /go/bin/metacontroller /usr/bin
 CMD ["/usr/bin/metacontroller"]
