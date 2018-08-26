@@ -14,19 +14,11 @@ TARGETS = $(shell echo $(INPUTS)|xargs -d ' ' -I {} echo $(REGISTRY)$(GCLOUD_PRO
 SOURCES = $(shell echo $(INPUTS)|sed 's/ /.build /g'|sed 's/$$/.build/')
 PUSHES = $(shell echo $(INPUTS)|sed 's/ /.push /g'|sed 's/$$/.push/')
 PUSHES_LATEST = $(shell echo $(INPUTS)|sed 's/ /.push_latest /g'|sed 's/$$/.push_latest/')
-DEPLOYS = $(shell echo $(INPUTS)|sed 's/ /.deploy /g'|sed 's/$$/.deploy/')
-DEPLOYS_LATEST = $(shell echo $(INPUTS)|sed 's/ /.deploy_latest /g'|sed 's/$$/.deploy_latest/')
-# set to sleep if you would like to debug from main
-DEPLOY_COMMAND ?= ''
-UNDEPLOYS = $(shell echo $(INPUTS)|sed 's/ /.undeploy /g'|sed 's/$$/.undeploy/')
 VERSIONS = $(shell scripts/buildargs.sh)
 TAG ?= $(shell date +v%Y%m%d)-$(shell git describe --tags --always --dirty)-$(shell git diff | shasum -a256 | cut -c -6)
-DEBUG ?= false
-# modes are attach|exec. "attach" assumes the process is running. "exec" assumes the process is not.
-DEBUG_MODE ?= attach
 PORT ?= 2345
 
-%.build: generated_files
+%.build: dep generated_files 
 	@scripts/pull.sh $(REGISTRY)$(GCLOUD_PROJECT)/$* $(TAG)
 	@scripts/build.sh $(DOCKER_BUILD_OPTS) --build-arg REGISTRY=$(REGISTRY) --build-arg PROJECT=$(GCLOUD_PROJECT) $(VERSIONS) --target=$* -t $(REGISTRY)$(GCLOUD_PROJECT)/$*:$(TAG) .
 	@docker tag $(REGISTRY)$(GCLOUD_PROJECT)/$*:$(TAG) gcr.io/$(GCLOUD_PROJECT)/$*:latest
@@ -38,18 +30,7 @@ PORT ?= 2345
 	scripts/push.sh $(REGISTRY)$(GCLOUD_PROJECT)/$* $(TAG)
 	scripts/push.sh $(REGISTRY)$(GCLOUD_PROJECT)/$* latest
 
-%.deploy:
-	@$(eval DEPLOYED := $(shell scripts/deploy.sh $* $(TAG) $(PORT) $(DEPLOY_COMMAND)))
-	@echo Pod is $(DEPLOYED).
-
-%.deploy_latest:
-	@$(eval DEPLOYED := $(shell scripts/deploy.sh $* latest $(PORT) $(DEPLOY_COMMAND)))
-	@echo Pod is $(DEPLOYED).
-
-%.undeploy:
-	@scripts/undeploy.sh $*
-
-all: build push deploy
+all: push_latest
 
 dep:
 	@dep ensure
@@ -65,19 +46,6 @@ envvars:
 	@echo DEPLOYS=$(DEPLOYS)
 	@echo UNDEPLOYS=$(UNDEPLOYS)
 
-debug:
-	scripts/debug.sh authz_controller_build manager $(PORT)
-
-deploy_exec_debug:
-	@make undeploy
-	@DEPLOY_COMMAND=sleep make authz_controller_build.deploy_latest
-	@DEBUG_MODE=exec make debug
-
-deploy_attach_debug:
-	@make undeploy
-	@make authz_controller_build.deploy_latest
-	@make debug
-
 $(TARGETS): $(REGISTRY)$(GCLOUD_PROJECT)/%: %.build
 
 build: $(TARGETS)
@@ -85,12 +53,6 @@ build: $(TARGETS)
 push: $(PUSHES)
 
 push_latest: $(PUSHES_LATEST)
-
-deploy: $(DEPLOYS)
-
-deploy_latest: $(DEPLOYS_LATEST)
-
-undeploy: $(UNDEPLOYS)
 
 unit-test:
 	go test -i ./...

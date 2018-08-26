@@ -11,4 +11,4 @@ COPY . /go/src/k8s.io/metacontroller/
 WORKDIR /go/src/k8s.io/metacontroller/
 RUN dep ensure && go install
 RUN cp /go/bin/metacontroller /usr/bin
-CMD ["/usr/bin/metacontroller"]
+CMD ["/usr/bin/metacontroller", "--logtostderr", "-v=4", "--discovery-interval=20s"]
