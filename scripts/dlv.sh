@@ -4,7 +4,7 @@ cleanup()
 {
   if [[ -n $dlvcmd ]]; then
     echo killing $dlvcmd
-    pkill -9 -f $dlvcmd
+    pkill -f $dlvcmd
   fi
 }
 trap cleanup EXIT

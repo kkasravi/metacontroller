@@ -3,13 +3,22 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:c742dcfe9b6dee751d12f7a7039263c83640d4946a5199da285403fc7ff35258"
   name = "github.com/google/go-jsonnet"
-  packages = [".","ast","parser"]
+  packages = [
+    ".",
+    "ast",
+    "parser",
+  ]
+  pruneopts = ""
   revision = "c7a5b68f1c7a2f5e69736e489790f58edd27f7f3"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "dff655412715ccf4f74481ef79f3d20d587d66eb1e1b47aa715890f610302c6e"
+  input-imports = [
+    "github.com/google/go-jsonnet",
+    "github.com/google/go-jsonnet/ast",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
