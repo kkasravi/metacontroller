@@ -9,6 +9,9 @@ FROM ${REGISTRY}${PROJECT}/authz_controller_build:$AUTHZ_CONTROLLER_BUILD_VERSIO
 
 COPY . /go/src/k8s.io/metacontroller/
 WORKDIR /go/src/k8s.io/metacontroller/
-RUN go build -gcflags "all=-N -l" -a -o /go/bin/metacontroller k8s.io/metacontroller
-RUN cp /go/bin/metacontroller /usr/bin
+RUN dep ensure && go install
+
+FROM debian:stretch-slim
+COPY --from=build /go/bin/metacontroller /usr/bin/
+RUN apt-get update && apt-get install --no-install-recommends -y ca-certificates && rm -rf /var/lib/apt/lists/*
 CMD ["/usr/bin/metacontroller", "--logtostderr", "-v=4", "--discovery-interval=20s"]
