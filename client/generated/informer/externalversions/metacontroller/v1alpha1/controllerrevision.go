@@ -25,7 +25,7 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
-	metacontrollerv1alpha1 "k8s.io/metacontroller/apis/metacontroller/v1alpha1"
+	metacontroller_v1alpha1 "k8s.io/metacontroller/apis/metacontroller/v1alpha1"
 	internalclientset "k8s.io/metacontroller/client/generated/clientset/internalclientset"
 	internalinterfaces "k8s.io/metacontroller/client/generated/informer/externalversions/internalinterfaces"
 	v1alpha1 "k8s.io/metacontroller/client/generated/lister/metacontroller/v1alpha1"
@@ -70,7 +70,7 @@ func NewFilteredControllerRevisionInformer(client internalclientset.Interface, n
 				return client.MetacontrollerV1alpha1().ControllerRevisions(namespace).Watch(options)
 			},
 		},
-		&metacontrollerv1alpha1.ControllerRevision{},
+		&metacontroller_v1alpha1.ControllerRevision{},
 		resyncPeriod,
 		indexers,
 	)
@@ -81,7 +81,7 @@ func (f *controllerRevisionInformer) defaultInformer(client internalclientset.In
 }
 
 func (f *controllerRevisionInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&metacontrollerv1alpha1.ControllerRevision{}, f.defaultInformer)
+	return f.factory.InformerFor(&metacontroller_v1alpha1.ControllerRevision{}, f.defaultInformer)
 }
 
 func (f *controllerRevisionInformer) Lister() v1alpha1.ControllerRevisionLister {

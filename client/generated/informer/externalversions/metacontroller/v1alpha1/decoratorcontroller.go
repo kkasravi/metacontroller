@@ -25,7 +25,7 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
-	metacontrollerv1alpha1 "k8s.io/metacontroller/apis/metacontroller/v1alpha1"
+	metacontroller_v1alpha1 "k8s.io/metacontroller/apis/metacontroller/v1alpha1"
 	internalclientset "k8s.io/metacontroller/client/generated/clientset/internalclientset"
 	internalinterfaces "k8s.io/metacontroller/client/generated/informer/externalversions/internalinterfaces"
 	v1alpha1 "k8s.io/metacontroller/client/generated/lister/metacontroller/v1alpha1"
@@ -69,7 +69,7 @@ func NewFilteredDecoratorControllerInformer(client internalclientset.Interface, 
 				return client.MetacontrollerV1alpha1().DecoratorControllers().Watch(options)
 			},
 		},
-		&metacontrollerv1alpha1.DecoratorController{},
+		&metacontroller_v1alpha1.DecoratorController{},
 		resyncPeriod,
 		indexers,
 	)
@@ -80,7 +80,7 @@ func (f *decoratorControllerInformer) defaultInformer(client internalclientset.I
 }
 
 func (f *decoratorControllerInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&metacontrollerv1alpha1.DecoratorController{}, f.defaultInformer)
+	return f.factory.InformerFor(&metacontroller_v1alpha1.DecoratorController{}, f.defaultInformer)
 }
 
 func (f *decoratorControllerInformer) Lister() v1alpha1.DecoratorControllerLister {

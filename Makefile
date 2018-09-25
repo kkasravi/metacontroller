@@ -18,7 +18,7 @@ VERSIONS = $(shell scripts/buildargs.sh)
 TAG ?= $(shell date +v%Y%m%d)-$(shell git describe --tags --always --dirty)-$(shell git diff | shasum -a256 | cut -c -6)
 PORT ?= 2345
 
-%.build: dep generated_files 
+%.build: generated_files 
 	@scripts/pull.sh $(REGISTRY)$(GCLOUD_PROJECT)/$* $(TAG)
 	@scripts/build.sh $(DOCKER_BUILD_OPTS) --build-arg REGISTRY=$(REGISTRY) --build-arg PROJECT=$(GCLOUD_PROJECT) $(VERSIONS) --target=$* -t $(REGISTRY)$(GCLOUD_PROJECT)/$*:$(TAG) .
 	@docker tag $(REGISTRY)$(GCLOUD_PROJECT)/$*:$(TAG) gcr.io/$(GCLOUD_PROJECT)/$*:latest

@@ -25,7 +25,7 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
-	metacontrollerv1alpha1 "k8s.io/metacontroller/apis/metacontroller/v1alpha1"
+	metacontroller_v1alpha1 "k8s.io/metacontroller/apis/metacontroller/v1alpha1"
 	internalclientset "k8s.io/metacontroller/client/generated/clientset/internalclientset"
 	internalinterfaces "k8s.io/metacontroller/client/generated/informer/externalversions/internalinterfaces"
 	v1alpha1 "k8s.io/metacontroller/client/generated/lister/metacontroller/v1alpha1"
@@ -69,7 +69,7 @@ func NewFilteredCompositeControllerInformer(client internalclientset.Interface, 
 				return client.MetacontrollerV1alpha1().CompositeControllers().Watch(options)
 			},
 		},
-		&metacontrollerv1alpha1.CompositeController{},
+		&metacontroller_v1alpha1.CompositeController{},
 		resyncPeriod,
 		indexers,
 	)
@@ -80,7 +80,7 @@ func (f *compositeControllerInformer) defaultInformer(client internalclientset.I
 }
 
 func (f *compositeControllerInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&metacontrollerv1alpha1.CompositeController{}, f.defaultInformer)
+	return f.factory.InformerFor(&metacontroller_v1alpha1.CompositeController{}, f.defaultInformer)
 }
 
 func (f *compositeControllerInformer) Lister() v1alpha1.CompositeControllerLister {
